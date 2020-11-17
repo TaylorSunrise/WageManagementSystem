@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 @HeadStyle(horizontalAlignment= HorizontalAlignment.CENTER,verticalAlignment= VerticalAlignment.CENTER,fillBackgroundColor=-1)
 @ContentStyle(horizontalAlignment= HorizontalAlignment.CENTER)
 public class Info {
+    //通过index 参数控制所在的列的索引
     @ExcelProperty(value = {"id"},index = 0)
     protected Integer id;
     @ExcelProperty(value = {"用户名"},index = 1)
@@ -33,7 +34,7 @@ public class Info {
     @ExcelProperty(value = {"工资构成"},index = 3)
     protected String struct;
     private Integer type;
-
+    //
     @ColumnWidth(15)
     @ExcelProperty(value = {"应发工资"},index = 36)
     protected String shouldSalary;
