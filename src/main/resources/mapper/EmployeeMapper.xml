@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.love.meat.dao.EmployeeDao">
+    <select id="getEmployeesByStatus" resultType="Employee">
+        SELECT
+            e.`id`,
+            e.`username`,
+            e.`createtime`,
+            d.`department`,
+            e.`sex`,
+            e.`isdelete`,
+            e.`struct`
+            FROM (
+                SELECT
+                    e.`id`,
+                    e.`username`,
+                    e.`createtime`,
+                    e.`department`,
+                    e.`sex`,
+                    e.`isdelete`,
+                    w.`struct`
+                FROM employee e
+                LEFT JOIN wagestruct w ON e.wagestruct = w.id
+                WHERE isdelete = #{status}
+        ) e LEFT JOIN department d ON e.department = d.id
+    </select>
+
+    <select id="getEmployees" resultType="Employee">
+        SELECT
+            e.`id`,
+            e.`username`,
+            e.`createtime`,
+            d.`department`,
+            e.`sex`,
+            e.`isdelete`,
+            e.`struct` wagestruct
+            FROM (
+                SELECT
+                    e.`id`,
+                    e.`username`,
+                    e.`createtime`,
+                    e.`department`,
+                    e.`sex`,
+                    e.`isdelete`,
+                    w.`struct`
+                FROM employee e
+                LEFT JOIN wagestruct w ON e.wagestruct = w.id
+        ) e LEFT JOIN department d ON e.department = d.id
+    </select>
+
+    <select id="getWageStruct" resultType="WageStruct">
+        SELECT id,struct FROM wagestruct
+    </select>
+
+    <select id="getDepartments" resultType="Department">
+        SELECT id,department FROM department
+    </select>
+
+    <insert id="insertEmployee">
+        INSERT INTO employee(username,createtime,wagestruct,department,sex,isdelete)
+        VALUES
+        (#{username},#{createtime},#{wagestruct},#{department},#{sex},#{isdelete})
+    </insert>
+
+    <update id="updateEmployeeById">
+        UPDATE employee SET isdelete = #{isdelete} WHERE id = #{id}
+    </update>
+
+    <select id="getEmployeeById" resultType="Employee">
+        SELECT id,username,createtime,wagestruct,department,sex,isdelete FROM employee WHERE id = #{id}
+    </select>
+
+    <update id="updateEmployee">
+        UPDATE employee SET
+        username = #{username},
+        createtime = #{createtime},
+        wagestruct = #{wagestruct},
+        department = #{department},
+        sex = #{sex}
+        WHERE id = #{id}
+    </update>
+
+    <select id="getEmployeesByType" resultType="Employee">
+        SELECT id,username,department,sex FROM employee WHERE wagestruct = #{type}
+    </select>
+
+    <select id="getTests" resultType="Info">
+        SELECT
+            u.id,
+            e.username,
+            u.record,
+            u.month,
+            u.struct,
+            u.type
+        FROM (
+            SELECT
+                u.id,
+                u.userid,
+                u.attendancerecord record,
+                u.month,
+                w.id type,
+                w.struct
+            FROM usercheck u LEFT JOIN wagestruct w ON u.wagestruct = w.id
+        ) u LEFT JOIN employee e ON u.userid = e.id
+    </select>
+
+    <select id="getTestsByMonth" resultType="Info">
+        SELECT
+            u.id,
+            e.username,
+            u.record,
+            u.month,
+            u.struct,
+            u.type
+        FROM (
+            SELECT
+                u.id,
+                u.userid,
+                u.attendancerecord record,
+                u.month,
+                w.id type,
+                w.struct
+            FROM usercheck u LEFT JOIN wagestruct w ON u.wagestruct = w.id
+            WHERE u.month = #{month} AND u.wagestruct = #{type}
+        ) u LEFT JOIN employee e ON u.userid = e.id
+    </select>
+
+    <select id="getTestsByMonth2" resultType="Info">
+        SELECT
+            u.id,
+            e.username,
+            u.record,
+            u.month,
+            u.struct,
+            u.type
+        FROM (
+            SELECT
+                u.id,
+                u.userid,
+                u.attendancerecord record,
+                u.month,
+                w.id type,
+                w.struct
+            FROM usercheck u LEFT JOIN wagestruct w ON u.wagestruct = w.id
+            WHERE u.month = #{month}
+        ) u LEFT JOIN employee e ON u.userid = e.id
+    </select>
+
+    <select id="getTestsByType" resultType="Info">
+        SELECT
+            u.id,
+            e.username,
+            u.record,
+            u.month,
+            u.struct,
+            u.type
+        FROM (
+            SELECT
+                u.id,
+                u.userid,
+                u.attendancerecord record,
+                u.month,
+                w.id type,
+                w.struct
+            FROM usercheck u LEFT JOIN wagestruct w ON u.wagestruct = w.id
+            WHERE u.wagestruct = #{type}
+        ) u LEFT JOIN employee e ON u.userid = e.id
+    </select>
+
+    <select id="getTestByInfo" resultType="Info">
+        SELECT
+            u.id,
+            e.username,
+            u.record,
+            u.month,
+            u.struct,
+            u.type
+        FROM (
+            SELECT
+                u.id,
+                u.userid,
+                u.attendancerecord record,
+                u.month,
+                w.id type,
+                w.struct
+            FROM usercheck u LEFT JOIN wagestruct w ON u.wagestruct = w.id
+            WHERE  u.id = #{id}
+        ) u LEFT JOIN employee e ON u.userid = e.id
+    </select>
+
+    <select id="getEmployeeSalaryByType" resultType="SampleSalary">
+        SELECT
+            u.id,
+            e.username,
+            u.record,
+            u.month,
+            u.struct
+        FROM (
+            SELECT
+            u.id,
+            u.userid,
+            u.attendancerecord record,
+            u.month,
+            w.struct
+            FROM usercheck u LEFT JOIN wagestruct w ON u.wagestruct = w.id
+            WHERE u.wagestruct = #{type}
+        ) u LEFT JOIN employee e ON u.userid = e.id
+    </select>
+
+    <insert id="insertData">
+        INSERT INTO usercheck(userid,attendancerecord,`month`,wagestruct)
+        VALUES
+        <foreach collection="datas" item="data" separator=",">
+            (#{data.userid},#{data.record},#{data.month},#{data.struct})
+        </foreach>
+    </insert>
+</mapper>
