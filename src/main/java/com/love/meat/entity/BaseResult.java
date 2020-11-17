@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * @author Taylor
+ * 网络状态码
  * @time 2020-07-23
  */
 public class BaseResult implements Serializable {
